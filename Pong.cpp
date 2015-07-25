@@ -154,9 +154,9 @@ public:
 		//Handle movement events and key presses! Note that this is in the window.pollEvent() stuff
 		//this way of doing things makes movement extremely smooth
 
-		if (key == sf::Keyboard::Key::W || key == sf::Keyboard::Key::Up || key == sf::Keyboard::Key::Right || key == sf::Keyboard::Key::D)
+		if (key == sf::Keyboard::Key::W || key == sf::Keyboard::Key::D)
 			m_isMovingUp = isPressed;
-		if (key == sf::Keyboard::Key::S || key == sf::Keyboard::Key::Down || key == sf::Keyboard::Key::Left || key == sf::Keyboard::Key::A)
+		if (key == sf::Keyboard::Key::S || key == sf::Keyboard::Key::A)
 			m_isMovingDown = isPressed;
 	}
 
@@ -247,7 +247,19 @@ private:
 	sf::Text m_countDownText;
 	bool m_countDownDisplay;
 
+	int aiCurrScore;
+
 public:
+	int getScore()
+	{
+		return aiCurrScore;
+	}
+
+	void setCurrScore(int i)
+	{
+		aiCurrScore = i;
+	}
+
 	float getTop()
 	{
 		return m_top;
@@ -310,6 +322,8 @@ public:
 		m_countDownText.setPosition(0, 0);
 
 		m_countDownDisplay = false;
+
+		aiCurrScore = 0;
 	}
 
 	void Update(sf::Time deltaTime, sf::Clock &ballClock, sf::RenderWindow &window)
@@ -580,16 +594,25 @@ public:
 			m_speed = 0.053f;
 			m_speedTop = 100.f;
 			m_speedSlow = 0.16f;
+			m_movementConstant = 0.00018f;
 			break;
 		case 1:
 			m_speed = 0.11f;
 			m_speedTop = 110.f;
 			m_speedSlow = 0.34f;
+			m_movementConstant = 0.00018f;
 			break;
 		case 2:
 			m_speed = 0.2f;
 			m_speedTop = 150.f;
 			m_speedSlow = 20.0f;
+			m_movementConstant = 0.00018f;
+			break;
+		case 3:
+			m_speed = 0.1f;
+			m_speedTop = 100.f;
+			m_speedSlow = 0.2f;
+			m_movementConstant = 0.0002f;
 			break;
 		}
 	}
@@ -660,6 +683,7 @@ public:
 			break;
 
 		case 2:
+			//perfectly calc where ball is
 			if(b.getSlope().x < 0)
 			{
 				m_AILEVEL3STUFF = true;
@@ -728,7 +752,20 @@ public:
 			}
 
 			break;
+
+			//case 4 is 2 player, so void Player2HandleEvents takes care of it
 		}
+	}
+
+	void Player2HandleEvents(sf::Keyboard::Key key, bool isPressed) //<--- this stuff is in window.pollEvent()!!
+	{
+		//Handle movement events and key presses! Note that this is in the window.pollEvent() stuff
+		//this way of doing things makes movement extremely smooth
+
+		if (key == sf::Keyboard::Key::Up || key == sf::Keyboard::Key::Right)
+			m_isMovingUp = isPressed;
+		if (key == sf::Keyboard::Key::Down || key == sf::Keyboard::Key::Left)
+			m_isMovingDown = isPressed;
 	}
 
 	void Move(sf::Time deltaTime)
@@ -842,7 +879,7 @@ public:
 	void MainTextUpdate(sf::RenderWindow &window)
 	{
 		m_mainText.setString("MENU");
-		m_mainText.setPosition(window.getSize().x/2 - m_mainText.getGlobalBounds().width/2, 0);
+		m_mainText.setPosition(window.getSize().x/2 - m_mainText.getGlobalBounds().width/2, 50);
 	}
 
 	int getCurrentScore()
@@ -876,7 +913,7 @@ public:
 		m_mainText.setFont(menuFont);
 		m_mainText.setColor(sf::Color::White);
 		m_mainText.setString("MENU");
-		m_mainText.setPosition(windowx/2 - m_mainText.getGlobalBounds().width/2, 0);
+		m_mainText.setPosition(windowx/2 - m_mainText.getGlobalBounds().width/2, 50);
 
 		m_backText.setCharacterSize(40); //<--- for back options in highscore and options
 		m_backText.setStyle(sf::Text::Bold);
@@ -896,7 +933,7 @@ public:
 		m_highScoreText.setFont(menuFont);
 		m_highScoreText.setColor(sf::Color::White);
 		m_highScoreText.setString("Your highscore is " + std::to_string(m_highScore) + "!");
-		m_highScoreText.setPosition(windowx/2 - m_highScoreText.getGlobalBounds().width/2, 100);
+		m_highScoreText.setPosition(windowx/2 - m_highScoreText.getGlobalBounds().width/2, 150);
 
 		m_currentScore = 0;
 
@@ -909,7 +946,7 @@ public:
 			text->setCharacterSize(60);
 			text->setStyle(sf::Text::Bold);
 
-			text->setPosition(windowx/2 - text->getGlobalBounds().width/2, 100*(i+1)); //<--- text position halfway higher for some reason?
+			text->setPosition(windowx/2 - text->getGlobalBounds().width/2, 100*(i+1) + 50); //<--- text position halfway higher for some reason?
 
 			m_texts.push_back(*text);
 
@@ -935,7 +972,7 @@ public:
 			else if(i == 2)
 				text->setString("AI Level");
 
-			text->setPosition(windowx/2 - text->getGlobalBounds().width/2, 100*i + 120);
+			text->setPosition(windowx/2 - text->getGlobalBounds().width/2, 100*i + 170);
 
 			m_optionsTexts.push_back(*text);
 		}
@@ -960,9 +997,11 @@ public:
 					text->setString("Medium");
 				else if(m_optionsAILevel == 2)
 					text->setString("Hard");
+				else if(m_optionsAILevel == 3)
+					text->setString("2 Player");
 			}
 
-			text->setPosition(windowx/2 - text->getGlobalBounds().width/2, 100*i + 150);
+			text->setPosition(windowx/2 - text->getGlobalBounds().width/2, 100*i + 210);
 
 			m_optionsLevels.push_back(*text);
 		}
@@ -1122,7 +1161,24 @@ public:
 		}
 	}
 
-	void Click(sf::RenderWindow &window, SoundPlayer &sp, AI &ai)
+	void ResetText(Ball &ball, sf::Text &text, sf::Text &text2, sf::RenderWindow &window, sf::Clock &clock, AI &a)
+	{
+		ball.setCurrScore(0);
+		m_currentScore = 0;
+
+		text.setString(std::string("Score: " + std::to_string(getCurrentScore())));
+		text.setPosition(window.getSize().x/2 - text.getGlobalBounds().width/2 - 250, 10);
+
+		text2.setString(std::string("Score: " + std::to_string(ball.getScore())));
+		text2.setPosition(window.getSize().x/2 - text.getGlobalBounds().width/2 + 250, 10);
+
+		ball.RespawnCountDown(sf::Vector2f(window.getSize().x / 2 - ball.getRect().getSize().x/2, window.getSize().y / 2 - ball.getRect().getSize().y/2), sf::Vector2f(1.f, -1.f));
+		clock.restart();
+
+		a.setAILevel3Bool(true);
+	}
+
+	void Click(sf::RenderWindow &window, SoundPlayer &sp, AI &ai, Ball &ball, sf::Text &text, sf::Text &text2, sf::Clock &clock)
 	{
 		if(m_state == 0)
 		{
@@ -1143,8 +1199,8 @@ public:
 
 				m_state = 1;
 				m_mainText.setString("HIGHSCORE");
-				m_mainText.setPosition(window.getSize().x/2 - m_mainText.getGlobalBounds().width/2, 0);
-				m_backText.setPosition(window.getSize().x/2 - m_backText.getGlobalBounds().width/2, 200);
+				m_mainText.setPosition(window.getSize().x/2 - m_mainText.getGlobalBounds().width/2, 50);
+				m_backText.setPosition(window.getSize().x/2 - m_backText.getGlobalBounds().width/2, 250);
 				m_backRect.setPosition(m_backText.getPosition().x, m_backText.getPosition().y);
 			}
 		
@@ -1156,8 +1212,8 @@ public:
 
 				m_state = 2;
 				m_mainText.setString("OPTIONS");
-				m_mainText.setPosition(window.getSize().x/2 - m_mainText.getGlobalBounds().width/2, 0);
-				m_backText.setPosition(window.getSize().x/2 - m_backText.getGlobalBounds().width/2, 450);
+				m_mainText.setPosition(window.getSize().x/2 - m_mainText.getGlobalBounds().width/2, 50);
+				m_backText.setPosition(window.getSize().x/2 - m_backText.getGlobalBounds().width/2, 500);
 				m_backRect.setPosition(m_backText.getPosition().x, m_backText.getPosition().y);
 			}
 
@@ -1202,7 +1258,7 @@ public:
 						sp.setMusicVolume(m_optionsMusicVolume);
 
 						m_optionsLevels[0].setString(std::to_string(m_optionsMusicVolume));
-						m_optionsLevels[0].setPosition(window.getSize().x/2 - m_optionsLevels[0].getGlobalBounds().width/2, 150);
+						m_optionsLevels[0].setPosition(window.getSize().x/2 - m_optionsLevels[0].getGlobalBounds().width/2, 210);
 					}
 					else if(i == 1 && m_optionsMusicVolume < 100) //<--- music right
 					{
@@ -1210,7 +1266,7 @@ public:
 						sp.setMusicVolume(m_optionsMusicVolume);
 
 						m_optionsLevels[0].setString(std::to_string(m_optionsMusicVolume));
-						m_optionsLevels[0].setPosition(window.getSize().x/2 - m_optionsLevels[0].getGlobalBounds().width/2, 150);
+						m_optionsLevels[0].setPosition(window.getSize().x/2 - m_optionsLevels[0].getGlobalBounds().width/2, 210);
 					}
 					else if(i == 2 && m_optionsSoundEffectsVolume > 0) //<--- sound effect left
 					{
@@ -1218,7 +1274,7 @@ public:
 						sp.setSoundEffectsVolume(m_optionsSoundEffectsVolume);
 
 						m_optionsLevels[1].setString(std::to_string(m_optionsSoundEffectsVolume));
-						m_optionsLevels[1].setPosition(window.getSize().x/2 - m_optionsLevels[1].getGlobalBounds().width/2, 250);
+						m_optionsLevels[1].setPosition(window.getSize().x/2 - m_optionsLevels[1].getGlobalBounds().width/2, 310);
 					}
 					else if(i == 3 && m_optionsSoundEffectsVolume < 100) //<--- sound effect right
 					{
@@ -1226,7 +1282,7 @@ public:
 						sp.setSoundEffectsVolume(m_optionsSoundEffectsVolume);
 
 						m_optionsLevels[1].setString(std::to_string(m_optionsSoundEffectsVolume));
-						m_optionsLevels[1].setPosition(window.getSize().x/2 - m_optionsLevels[1].getGlobalBounds().width/2, 250);
+						m_optionsLevels[1].setPosition(window.getSize().x/2 - m_optionsLevels[1].getGlobalBounds().width/2, 310);
 					}
 					else if(i == 4 && m_optionsAILevel > 0) //<--- AI level left
 					{
@@ -1239,10 +1295,14 @@ public:
 							m_optionsLevels[2].setString("Medium");
 						else if(m_optionsAILevel == 2)
 							m_optionsLevels[2].setString("Hard");
+						else if(m_optionsAILevel == 3)
+							m_optionsLevels[2].setString("2 Player");
 
-						m_optionsLevels[2].setPosition(window.getSize().x/2 - m_optionsLevels[2].getGlobalBounds().width/2, 350);
+						ResetText(ball, text, text2, window, clock, ai);
+
+						m_optionsLevels[2].setPosition(window.getSize().x/2 - m_optionsLevels[2].getGlobalBounds().width/2, 410);
 					}
-					else if(i == 5 && m_optionsAILevel < 2) //<--- AI level right
+					else if(i == 5 && m_optionsAILevel < 3) //<--- AI level right
 					{
 						m_optionsAILevel += 1;
 						ai.MenuUpdate(m_optionsAILevel);
@@ -1253,8 +1313,12 @@ public:
 							m_optionsLevels[2].setString("Medium");
 						else if(m_optionsAILevel == 2)
 							m_optionsLevels[2].setString("Hard");
+						else if(m_optionsAILevel == 3)
+							m_optionsLevels[2].setString("2 Player");
 
-						m_optionsLevels[2].setPosition(window.getSize().x/2 - m_optionsLevels[2].getGlobalBounds().width/2, 350);
+						ResetText(ball, text, text2, window, clock, ai);
+
+						m_optionsLevels[2].setPosition(window.getSize().x/2 - m_optionsLevels[2].getGlobalBounds().width/2, 410);
 					}
 				}
 			}
@@ -1271,12 +1335,17 @@ public:
 		}
 	}
 
-	void BallOutOfBounds(Ball &ball, sf::Text &text, sf::RenderWindow &window, sf::Clock &clock, AI &a)
+	void BallOutOfBounds(Ball &ball, sf::Text &text, sf::Text &text2, sf::RenderWindow &window, sf::Clock &clock, AI &a)
 	{
 		//if out of bounds left
 		if(ball.getLeft() < -45.f)
 		{
 			//respawn the ball
+			ball.setCurrScore(ball.getScore() + 1);
+
+			text2.setString(std::string("Score: " + std::to_string(ball.getScore())));
+			text2.setPosition(window.getSize().x/2 - text.getGlobalBounds().width/2 + 250, 10);
+
 			ball.RespawnCountDown(sf::Vector2f(window.getSize().x / 2 - ball.getRect().getSize().x/2, window.getSize().y / 2 - ball.getRect().getSize().y/2), sf::Vector2f(1.f, -1.f));
 			clock.restart();
 
@@ -1294,7 +1363,7 @@ public:
 			}
 
 			text.setString(std::string("Score: " + std::to_string(getCurrentScore())));
-			text.setPosition(window.getSize().x/2 - text.getGlobalBounds().width/2, 0);
+			text.setPosition(window.getSize().x/2 - text.getGlobalBounds().width/2 - 250, 10);
 
 			ball.RespawnCountDown(sf::Vector2f(window.getSize().x / 2 - ball.getRect().getSize().x/2, window.getSize().y / 2 - ball.getRect().getSize().y/2), sf::Vector2f(1.f, -1.f));
 			clock.restart();
@@ -1319,10 +1388,7 @@ public:
 	}
 };
 
-int APIENTRY _tWinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPTSTR    lpCmdLine,
-                     int       nCmdShow)
+int main()
 {
 	//render window + stuff
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Pong", sf::Style::Titlebar | sf::Style::Close);
@@ -1392,11 +1458,22 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	currScoreText.setFont(menuFont);
 	currScoreText.setColor(sf::Color::White);
 	currScoreText.setString(std::string("Score: " + std::to_string(menu.getCurrentScore())));
-	currScoreText.setPosition(window.getSize().x/2 - currScoreText.getGlobalBounds().width/2, 0);
+	currScoreText.setPosition(window.getSize().x/2 - currScoreText.getGlobalBounds().width/2 - 250, 10);
+
+	sf::Text currAIScoreText;
+	currAIScoreText.setCharacterSize(60); //<--- text for the main menu thing. MENU, HIGHSCORE, OPTIONS
+	currAIScoreText.setStyle(sf::Text::Bold);
+	currAIScoreText.setFont(menuFont);
+	currAIScoreText.setColor(sf::Color::White);
+	currAIScoreText.setString(std::string("Score: " + std::to_string(ball.getScore())));
+	currAIScoreText.setPosition(window.getSize().x/2 - currAIScoreText.getGlobalBounds().width/2 + 250, 10);
 
 	while(window.isOpen())
 	{
+		start:
 		deltaTime = deltaClock.restart();
+		if(deltaTime.asSeconds() > 0.3f)
+			goto start;
 
 		sf::Event Event;
 		while(window.pollEvent(Event))
@@ -1404,8 +1481,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 			switch(Event.type)
 			{
 			case sf::Event::KeyPressed:
-				if(menu.getMenuUp() == false)
+				if(!menu.getMenuUp())
+				{
 					player.HandleEvents(Event.key.code, true);
+					if(ai.getAILevel() == 3)
+						ai.Player2HandleEvents(Event.key.code, true);
+				}
 				if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 				{
 					soundplayer.playMenuUp();
@@ -1423,12 +1504,16 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 			case sf::Event::KeyReleased:
 				if(!menu.getMenuUp())
+				{
 					player.HandleEvents(Event.key.code, false);
+					if(ai.getAILevel() == 3)
+						ai.Player2HandleEvents(Event.key.code, false);
+				}
 				break;
 
 			case sf::Event::MouseButtonReleased:
 				if(menu.getMenuUp())
-					menu.Click(window, soundplayer, ai);
+					menu.Click(window, soundplayer, ai, ball, currScoreText, currAIScoreText, ballClock);
 				break;
 
 			case sf::Event::LostFocus:
@@ -1469,7 +1554,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 			ai.HandleMovement(window, ball);
 
-			menu.BallOutOfBounds(ball, currScoreText, window, ballClock, ai);
+			menu.BallOutOfBounds(ball, currScoreText, currAIScoreText, window, ballClock, ai);
 		}
 		else
 		{
@@ -1480,6 +1565,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		player.Draw(window);
 		ai.Draw(window);
 		window.draw(currScoreText);
+		window.draw(currAIScoreText);
 		ball.Draw(window);
 
 		if(menu.getMenuUp() == true)
