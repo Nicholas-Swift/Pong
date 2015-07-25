@@ -1,8 +1,11 @@
 # Pong
-My first official project - a simple Pong clone.
+My first official project - an ultimate version of a classic game.
 
-I have created many other game development projects, but this is my first, official, completed project. It's a simple Pong clone,
-but I've added music, sound effects, and a menu with options. The project was made with C++ and SFML.
+Download and play here: http://nicholaswswift.itch.io/ultimate-pong
 
-To download and play pong, simply download the repository and run Pong.exe. The exe will have to be placed with the .dll files
-and the assets folder, the way it is structured in the repository.
+This is my first, official, completed project. It's a Pong clone, but I've added music, sound effects, and a menu with options. The project was made with C++ and SFML.
+
+On this GitHub page, you can find my assets and my code. If you would like to download and play the game, please go to the link above at itch.io.
+
+Attributions:
+Thank you to pixelsphere.org for the soundtrack!
