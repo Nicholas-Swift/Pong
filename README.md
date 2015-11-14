@@ -9,3 +9,7 @@ On this GitHub page, you can find my assets and my code. If you would like to do
 
 Attributions:
 Thank you to pixelsphere.org for the soundtrack!
+
+![Menu](http://www.nicholas-swift.com/images/Pong/menu.png)
+![Options](http://www.nicholas-swift.com/images/Pong/options.png)
+![Gameplay](http://www.nicholas-swift.com/images/Pong/gameplay.png)
