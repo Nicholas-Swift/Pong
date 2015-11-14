@@ -1,4 +1,9 @@
 # Pong
+
+![Menu](http://www.nicholas-swift.com/thumbs/Pong/menu-thumb.png)
+![Options](http://www.nicholas-swift.com/thumbs/Pong/options-thumb.png)
+![Gameplay](http://www.nicholas-swift.com/thumbs/Pong/gameplay-thumb.png)
+
 My first official project - an ultimate version of a classic game.
 
 Download and play here: http://nicholaswswift.itch.io/ultimate-pong
@@ -9,7 +14,3 @@ On this GitHub page, you can find my assets and my code. If you would like to do
 
 Attributions:
 Thank you to pixelsphere.org for the soundtrack!
-
-![Menu](http://www.nicholas-swift.com/images/Pong/menu.png)
-![Options](http://www.nicholas-swift.com/images/Pong/options.png)
-![Gameplay](http://www.nicholas-swift.com/images/Pong/gameplay.png)
