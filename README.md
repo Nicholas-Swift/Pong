@@ -1,4 +1,4 @@
-# Pong
+#Ultimate Pong
 
 ![Menu](http://www.nicholas-swift.com/thumbs/Pong/menu-thumb.png)
 ![Options](http://www.nicholas-swift.com/thumbs/Pong/options-thumb.png)
